@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Survey Form</title>
+  <link rel="stylesheet" href="survey.css">
+</head>
+<body>
+  <h1 id="title">Survey Form</h1>
+  
+  <p id="description">                        Thank you for taking the time to help us improve the platform</p>
+  
+  <form id="survey-form">
+    <label for="name" id="name-label">Name:</label>
+    <input type="text" id="name" required placeholder="Enter your name">
+    
+    <label for="email" id="email-label">Email:</label>
+    <input type="email" id="email" required placeholder="Enter your email">
+    
+    <label for="age" id="age-label">Age (optional):</label>
+    <input type="number" id="age" min="0" max="120" placeholder="Enter your age">
+    
+    <label for="number" id="number-label">Favorite Number (1-10):</label>
+    <input type="number" id="number" min="1" max="10" placeholder="Enter your favorite number">
+    
+    <label for="dropdown">Which option best describes your current role?</label>
+    <select id="dropdown">
+      <option value="student">Student</option>
+      <option value="working">Working Professional</option>
+      <option value="unemployed">Unemployed</option>
+      <option value="other">Other</option>
+    </select>
+    
+    <label>Are you satisfied with your studies until now?</label>
+    <div>
+      <input type="radio" id="definitely" name="recommendation" value="definitely">
+      <label for="definitely">Definitely</label>
+    </div>
+    <div>
+      <input type="radio" id="maybe" name="recommendation" value="maybe">
+      <label for="maybe">Maybe</label>
+    </div>
+    <div>
+      <input type="radio" id="not-sure" name="recommendation" value="not-sure">
+      <label for="not-sure">Not Sure</label>
+    </div>
+    
+    <label for="favorite-feature">From which school you came from?</label>
+    <select id="favorite-feature">
+      <option value="Liceo Scientifico">Liceo Scientifico</option>
+      <option value="Liceo Classico">Liceo Classico</option>
+      <option value="Istituto Tecnico">Istituto Tecnico</option>
+      <option value="Istituto Alberghiero">Istituto Alberghiero</option>
+      <option value="Altro">Other</option>
+    </select>
+    
+    <fieldset>
+      <legend>What are your favorite subjects until now? (Check all that apply)</legend>
+      <label><input type="checkbox" name="improvements" value="Modelli">Modelli</label>
+      <label><input type="checkbox" name="improvements" value="Indagini Campionarie">Indagini Campionarie</label>
+      <label><input type="checkbox" name="improvements" value="Python">Python</label>
+      <label><input type="checkbox" name="improvements" value="Statistica">Statistica</label>
+      <label><input type="checkbox" name="improvements" value="Analisi Multivariata">Analisi Multivariata</label>
+      <label><input type="checkbox" name="improvements" value="SQL">SQL</label>
+      <label><input type="checkbox" name="improvements" value="Matematica Finanziaria">Matematica Finanziaria</label>
+      <label><input type="checkbox" name="improvements" value="Demografia">Demografia</label>
+      <label><input type="checkbox" name="improvements" value="Economia">Economia</label>
+      <label><input type="checkbox" name="improvements" value="Probabilità e inferenza">Probabilità e inferenza</label>
+      <label><input type="checkbox" name="improvements" value="SAS e Rstudio">SAS e Rstudio</label>
+      <label><input type="checkbox" name="improvements" value="Altro">Other</label>
+    </fieldset>
+    
+    <label for="comments">Additional Comments (optional):</label>
+    <textarea id="comments" placeholder="Enter any additional comments"></textarea>
+    
+    <input type="submit" id="submit" value="Submit">
+  </form>
+  
+  <script>
+    // Function to save form data on the server
+    function saveFormData(event) {
+      event.preventDefault();
+
+      // Retrieve form values
+      var name = document.getElementById('name').value;
+      var email = document.getElementById('email').value;
+      var age = document.getElementById('age').value;
+      var favoriteNumber = document.getElementById('number').value;
+      var currentRole = document.getElementById('dropdown').value;
+      var satisfaction = document.querySelector('input[name="recommendation"]:checked');
+      var school = document.getElementById('favorite-feature').value;
+      var favoriteSubjects = Array.from(document.querySelectorAll('input[name="improvements"]:checked')).map(function(element) {
+        return element.value;
+      });
+      var comments = document.getElementById('comments').value;
+
+      // Check if required fields are filled
+      if (!name || !email || !satisfaction) {
+        alert('Please fill in all required fields.');
+        return;
+      }
+
+      // Create an object to store form data
+      var formData = {
+        name: name,
+        email: email,
+        age: age,
+        favoriteNumber: favoriteNumber,
+        currentRole: currentRole,
+        satisfaction: satisfaction.value,
+        school: school,
+        favoriteSubjects: favoriteSubjects,
+        comments: comments
+      };
+
+      // Send a POST request to the server
+      fetch('/save-data', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      })
+      .then(response => {
+        if (response.ok) {
+          // Show a success message
+          alert('Survey form submitted successfully!');
+          // Clear the form fields
+          document.getElementById('name').value = '';
+          document.getElementById('email').value = '';
+          document.getElementById('age').value = '';
+          document.getElementById('number').value = '';
+          document.getElementById('dropdown').value = 'student';
+          document.querySelector('input[name="recommendation"]:checked').checked = false || true;
+          document.getElementById('favorite-feature').value = 'Liceo Scientifico';
+          Array.from(document.querySelectorAll('input[name="improvements"]:checked')).forEach(function(element) {
+            element.checked = false;
+          });
+          document.getElementById('comments').value = '';
+        } else {
+          throw new Error('Error saving form data');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+        // Show an error message
+        alert('An error occurred while submitting the form. Please try again later.');
+      });
+    }
+
+    // Add event listener to the form submit event
+    document.getElementById('survey-form').addEventListener('submit', saveFormData);
+  </script>
+</body>
+</html>
+
