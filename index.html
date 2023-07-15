@@ -115,39 +115,38 @@
       };
 
       // Send a POST request to the server
-      fetch('/save-data', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
-      })
-      .then(response => {
-        if (response.ok) {
-          // Show a success message
-          alert('Survey form submitted successfully!');
-          // Clear the form fields
-          document.getElementById('name').value = '';
-          document.getElementById('email').value = '';
-          document.getElementById('age').value = '';
-          document.getElementById('number').value = '';
-          document.getElementById('dropdown').value = 'student';
-          document.querySelector('input[name="recommendation"]:checked').checked = false || true;
-          document.getElementById('favorite-feature').value = 'Liceo Scientifico';
-          Array.from(document.querySelectorAll('input[name="improvements"]:checked')).forEach(function(element) {
-            element.checked = false;
-          });
-          document.getElementById('comments').value = '';
-        } else {
-          throw new Error('Error saving form data');
-        }
-      })
-      .catch(error => {
-        console.error(error);
-        // Show an error message
-        alert('An error occurred while submitting the form. Please try again later.');
-      });
-    }
+fetch('https://emanueleiacca.github.io/survey-form-University/', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(formData)
+})
+.then(response => {
+  if (response.ok) {
+    // Show a success message
+    alert('Survey form submitted successfully!');
+    // Clear the form fields
+    document.getElementById('name').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('age').value = '';
+    document.getElementById('number').value = '';
+    document.getElementById('dropdown').value = 'student';
+    document.querySelector('input[name="recommendation"]:checked').checked = false || true;
+    document.getElementById('favorite-feature').value = 'Liceo Scientifico';
+    Array.from(document.querySelectorAll('input[name="improvements"]:checked')).forEach(function(element) {
+      element.checked = false;
+    });
+    document.getElementById('comments').value = '';
+  } else {
+    throw new Error('Error saving form data');
+  }
+})
+.catch(error => {
+  console.error(error);
+  // Show an error message
+  alert('An error occurred while submitting the form. Please try again later.');
+});
 
     // Add event listener to the form submit event
     document.getElementById('survey-form').addEventListener('submit', saveFormData);
